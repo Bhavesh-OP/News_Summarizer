@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Sentiment Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div id="root">
+        <div class="min-h-screen flex flex-col items-center justify-center p-4">
+            <div class="w-full max-w-2xl bg-white p-6 rounded-2xl shadow-lg">
+                <h1 class="text-2xl font-bold text-center mb-4">News Sentiment Analyzer</h1>
+                
+                <!-- URL Input and Fetch Button -->
+                <div class="flex gap-2">
+                    <input type="text" id="article-url" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm flex-1" placeholder="Enter news article URL">
+                    <button id="fetch-article" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">Fetch Article</button>
+                </div>
+
+                <!-- Display article information -->
+                <div id="article-info" class="mt-4">
+                    <h3 id="article-title" class="text-xl font-semibold text-center"></h3>
+                    <p id="article-author" class="text-center text-gray-500"></p>
+                    <p id="article-publish-time" class="text-center text-gray-500"></p>
+                    <p id="article-summary" class="text-base text-gray-700 mt-2"></p>
+                    <p id="article-sentiment" class="text-center text-gray-800 mt-2"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('fetch-article').addEventListener('click', async function() {
+            const url = document.getElementById('article-url').value;
+            if (!url) return;
+
+            // Make a request to your Flask backend to fetch the article details
+            const response = await fetch(`/analyze?url=${encodeURIComponent(url)}`);
+            const data = await response.json();
+
+            // Display the article information
+            document.getElementById('article-title').innerText = data.title;
+            document.getElementById('article-author').innerText = `Author(s): ${data.authors.join(', ')}`;
+            document.getElementById('article-publish-time').innerText = `Published on: ${data.publish_time}`;
+            document.getElementById('article-summary').innerText = data.summary;
+            document.getElementById('article-sentiment').innerText = `Sentiment: ${data.sentiment}`;
+        });
+    </script>
+</body>
+</html>
